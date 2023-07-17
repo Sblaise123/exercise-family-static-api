@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, url_for
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from datastructures import FamilyStructure
-#from models import Person
+#from models import Perso
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -35,8 +35,34 @@ def handle_hello():
         "family": members
     }
 
+@app.route('/member', methods=['POST'])
+def add_family_member():
+    age = request.json.get("age")
+    first_name = request.json.get("first_name")
+    lucky_numbers = request.json.get("lucky_numbers")
+    jackson_family.add_member({
 
+        "id": jackson_family._generateId,
+        "first_name": first_name,
+        "last_name": jackson_family.last_name,
+        "age": age,
+        "lucky_numbers": lucky_numbers,
+
+    })
     return jsonify(response_body), 200
+
+
+@app.route("/delete/<int:id>", methods=['DELETE'])
+def delete_family_member(id):
+    jackson_family.delete_member(id)
+    response={"Family Member Deleted": True}
+    return jsonify(response), 200
+
+@app.route("/member/<int:id>", methods=['GET'])
+def get_individual_fmaily_member(id):
+    member = jackson_family.get_member(id)
+    response_body = member
+    return jsonify(response), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
